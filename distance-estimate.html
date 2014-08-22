@@ -1,0 +1,323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="language" content="en-CA"/>
+		<style type="text/css">
+			body {
+				width: 5in;
+				margin: 1in;
+				/*columns: 2 3in;*/
+				/*font-family: "Computer Modern", serif;*/
+				font-size: 12pt;
+			}
+			h1 {
+				font-size: 16pt;
+			}
+			a {
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+			.caption {
+				text-align: right;
+				/*margin-left: 3pc;*/
+				margin-bottom: 0;
+				font-style: italic;
+			}
+			.figure {
+				margin-left: 3pc;
+			}
+			.formula {
+				/*text-align: center;*/
+				margin-left: 3pc;
+			}
+		</style>
+		<title>
+			Estimating the distance between two sequences using
+			paired-end reads
+		</title>
+	</head>
+	<body>
+
+<h1>
+	Estimating the distance between two sequences using paired-end reads
+</h1>
+<p>Shaun D. Jackman, İnanç Birol
+<br/>
+Canada's Michael Smith Genome Sciences Centre,
+British Columbia Cancer Agency, Vancouver, British Columbia
+V5Z 4E6, Canada
+</p>
+
+<h1>Abstract</h1>
+
+<p>
+The estimation of distances between two sequences based on the
+paired-end reads that span the gap between them is a common and
+perhaps even necessary task of <i>de novo</i> assembly.
+</p>
+
+<h1>The data and problem</h1>
+
+<p>
+The goal is to estimate the size of the gap between two sequences.
+The data is obtained by mapping the reads to the two sequences in
+question. The two sequences are ordered and oriented to agree with the
+orientation of the reads. We establish a coordinate system where
+-1 is the last base of the first sequence and 0 is the first base of
+the second sequence, which we will refer to as the origin. A putative
+fragment size is calculated for each mate pair by taking the
+difference between the mapped position of the first sequenced base of
+the two reads. This putative fragment size differs from the actual
+fragment size by the size of the gap between the two sequences.
+</p>
+
+<p>
+The final input is the distribution of fragment sizes of the library,
+which may be specified or may be derived empirically by mapping the
+reads to a reference sequence or sequences assembled <i>de novo</i>.
+</p>
+
+<h1>Naïve estimate by comparing a statistic of the population and
+sample distributions
+</h1>
+
+<p>
+At first glance, this task appears to be rather simple, and a simple
+solution presents itself readily. A summary statistic, such as the
+median or mean, of the size of the fragments spanning the gap between
+two sequences can be calculated. Given <i>a priori</i> knowledge of
+the distribution of fragment sizes of a library, a reasonable
+estimate, <i>θ</i>, of the actual size of the gap,
+<i>θ₀</i>, is the difference between the mean of the
+population, <i>μ</i>, and the mean of the sample, <i>x̄</i>.
+</p>
+
+<p class="caption">
+Naïve estimate
+<div class="formula">
+	<i>θ</i> = <i>μ</i> - <i>x̄</i>
+</div>
+</p>
+
+<h1>Maximum likelihood estimate (MLE)</h1>
+
+<p>
+The estimate of the distance between the two sequences can be improved
+by using the probability distribution in its entirety rather than a
+summary statistic. For a fragment size <i>x</i>, the probability of
+seeing a fragment of size <i>x</i> selected at random from the
+population is <i>f(x)</i>.
+</p>
+
+<p>
+With a sample of <i>n</i> putative fragment sizes,
+<i>x<sub>1</sub></i>, ... , <i>x<sub>n</sub></i>, the likelihood that
+the two sequences are separated by a distance of <i>θ</i> bases is
+L(<i>θ</i>).
+</p>
+
+<p class="caption">
+Likelihood function
+<div class="formula">
+	<img src="http://upload.wikimedia.org/math/c/1/c/c1c4b82673ab82e617b8039666649c02.png"/>
+</div>
+</p>
+
+<p>
+We expect the population and sample to be identically distributed,
+except for a constant offset equal to the size of the gap.
+</p>
+
+<div class="formula">
+	<i>f</i> (<i>x</i> | <i>θ</i>) = <i>f</i> (<i>x</i> + <i>θ</i>)
+</div>
+
+<p>
+It is convenient to work with the average log-likelihood function.
+</p>
+
+<p class="caption">
+Log-likelihood function
+<div class="formula">
+	<img src="http://upload.wikimedia.org/math/c/e/0/ce0aae74093111605362d0c6ce36f9a7.png"/>
+</div>
+</p>
+
+<p>
+The most likely estimate for the size of the gap between the two
+sequences is the value of <i>θ</i> that maximizes the likelihood
+function.
+</p>
+
+<p class="caption">
+Maximum likelihood estimator (MLE) of <i>θ₀</i>
+<div class="formula">
+	<img src="http://upload.wikimedia.org/math/c/e/f/cef55f4e7e323f9807b0d9b64d885fbf.png"/>
+</div>
+</p>
+
+Finding the value of <i>θ</i> that maximizes the likelihood
+function is an optimization problem. When the range of possible values
+of <i>θ</i> is reasonably small, that is when the fragment size is
+reasonably small, it is reasonable to calculate exhaustively every of
+L(<i>θ</i>) to find the maximum, although a more efficient method
+certainly exists.
+
+<h1>Sample selection bias</h1>
+
+<p>
+We would expect the population and sample to be identically
+distributed, except for a constant offset equal to the size of the
+gap. This reasonables-sounding assumption is in fact incorrect. By
+selecting only those fragments that originate in the first sequence
+and terminate in the second sequence, that is those that span a
+particular point, we are preferentially selecting large fragments.
+</p>
+
+<p>
+We need the posterior probability of selecting a fragment of size
+<i>x</i> given that the fragment spans the origin, p(<i>x</i>). The
+prior probability distribution is the population distribution,
+<i>f<sub>X</sub></i> (<i>x</i>). The likelihood function, L(<i>x</i>),
+is P(spans origin | <i>X</i> = <i>x</i>). We can use Bayes thereom to
+define the posterior probability distribution.
+</p>
+
+<div class=formula>
+	<i>p</i>(<i>x</i>) = P(<i>X</i> = <i>x</i> | spans origins)
+	<br/>
+	&emsp;= P(<i>X</i> = <i>x</i>)
+	∙ P(spans origin | <i>X</i> = <i>x</i>)
+	/ P(spans origin)
+	<br/>
+	&emsp;= <i>f<sub>X</sub></i> (<i>x</i>) ∙ L(<i>x</i>)
+	/ P(spans origin)
+	<br/>
+	P(spans origin) = Σ<sup>G</sup><sub><i>i</i>=1</sub>
+	<i>f<sub>X</sub></i> (<i>i</i>) ∙ L(<i>i</i>)
+</div>
+
+<p>
+The probability P(spans origin) is a normalizing constant and is
+independent of <i>x</i>. To calculate the likelihood function,
+L(<i>x</i>), we consider every position at which a fragment of size
+<i>x</i> could originate and count the number of those fragments that
+span the origin. This counting task is straight forward: a fragment
+starting at one of the <i>x</i> positions to the left of the origin
+will span the origin, so there are <i>x</i> such positions. The total
+number of positions at which a fragment of size <i>x</i> could
+originate is <i>G</i> - <i>x</i> + 1, where <i>G</i> is the size of
+the genome. Assuming the genome is much larger than the fragment size,
+<i>G</i> approximates this value.
+</p>
+
+<p class="formula">
+L(<i>x</i>) = <i>x</i> / (<i>G</i> - <i>x</i> + 1) ≅ <i>x</i> / <i>G</i>
+</p>
+
+<p>
+This constant factor of <i>G</i> in the likelihood function, cancels
+with the corresponding term in the normalizing constant,
+P(spans origin).
+
+<div class=formula>
+	<i>p</i>(<i>x</i>) = <i>x</i> ∙ <i>f<sub>X</sub></i> (<i>x</i>) / <i>C</i>
+	<br/>
+	<i>C</i> = Σ<sup>∞</sup><sub><i>i</i>=0</sub>
+	<i>i</i> ∙ <i>f<sub>X</sub></i> (<i>i</i>)
+</div>
+
+<p>
+Since we are only interested in the value of <i>x</i> that maximizes
+<i>p</i>(<i>x</i>), the constant <i>C</i> need not be calculated.
+</p>
+
+<div class=formula>
+	<i>p</i>(<i>x</i>) ∝ <i>x</i> ∙ <i>f<sub>X</sub></i> (<i>x</i>)
+</div>
+
+<p>
+This result shows that a fragment that is twice as large as another
+fragment is twice as likely to span an arbitrary point, which is
+pleasingly intuitive. We can now use this posterior probability
+distribution in the MLE in place of the population distribution.
+</p>
+
+<div class="formula">
+	<i>f</i> (<i>x</i> | <i>θ</i>) = <i>p</i> (<i>x</i> + <i>θ</i>)
+</div>
+
+<h1>The effect of one short sequence</h1>
+
+<p>
+If you use the above posterior probability distribution to estimate the
+size of the gap, you will find that estimates to small sequences are
+in fact worse than if you had simply used the prior probability
+distribution. We assume above that the two sequences are much longer
+than the fragment size. If either of the sequences is short, its
+effect on the distance estimate is not negligible. Consider the case
+where the first sequence is long, and the second sequence is a single
+base—disregarding the difficulty of mapping to a sequence of a single
+base. For a fragment of size <i>x</i>, the position at which that
+fragment terminates is fixed, and there is exactly one position where
+that fragment can originate, <i>x</i> bases to the left of the origin.
+In fact, for a sequence of size ℓ, there are min(ℓ, <i>x</i>)
+positions at which that fragment could originate.
+</p>
+
+<div class=formula>
+	L(<i>x</i>) ∝ min(<i>x</i>, ℓ)
+	<br/>
+	<i>p</i>(<i>x</i>) ∝ min(<i>x</i>, ℓ) ∙ <i>f<sub>X</sub></i> (<i>x</i>)
+</div>
+
+<h1>The effect of both sequence lengths</h1>
+
+<p>
+When we consider the sizes of both sequences, ℓ₁ and ℓ₂, there are ℓ₁
+positions in the first sequence at which the fragment could originate
+and two restrictions on its length: that the fragment must be at least
+long enough to span the origin, and that it must be short enough that
+it terminates in the second sequence. For each originating position
+<i>i</i>, you can count the number of positions that satisfy these
+criteria.
+</p>
+
+<div class=formula>
+	L(<i>x</i>) ∝
+	Σ<sup>-1</sup><sub><i>i</i> =-ℓ₁</sub>
+	{ 1, 0 ≤ <i>i</i> + <i>x</i> &lt; ℓ₂;
+	0, otherwise
+	<br/>
+	&emsp;= min(<i>x</i>, ℓ₁, ℓ₂, max(0, ℓ₁ + ℓ₂ - <i>x</i>))
+</div>
+
+<div class=figure>
+	<img src="likelihood.svg"/>
+	<p>Figure: The likelihood function, L(<i>x</i>)</p>
+</div>
+
+<h1>Implementation</h1>
+
+<p>
+This algorithm is implemented by the <cite>ABySS</cite>
+<a href="#ABySS"><sup>†</sup></a> assembly software in the utility
+<i>DistanceEst</i>, which requires as its input the distribution of
+fragment sizes of the library and a <i>SAM</i> file of paired reads
+that map to different sequences.
+</p>
+
+<h1>References</h1>
+<p>
+<a name="ABySS">
+ABySS: A parallel assembler for short read sequence data. Simpson JT,
+Wong K, Jackman SD, Schein JE, Jones SJ, Birol I. Genome Research,
+2009-June.
+</a>
+</p>
+
+	</body>
+</html>
