@@ -1,17 +1,28 @@
-all: distance-estimator.html
+all: distance-estimator.html distance-estimator.pdf
 
 clean:
-	rm -f distance-estimator.html
+	rm -f \
+		distance-estimator.html \
+		distance-estimator.pdf \
+		distance-estimator.tex
+
+install-deps:
+	brew install pandoc
+	brew cask install mactex
 
 .PHONY: all clean
+.DELETE_ON_ERROR:
+.SECONDARY:
+
+mathjax=https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 
 # Render Markdown to HTML
 %.html: %.md
-	Rscript -e 'rmarkdown::render("$<", output_format = "html_document")'
+	pandoc -s --mathjax=$(mathjax) -o $@ $^
 
-# Render Markdown to PDF
-%.pdf: %.md
-	Rscript -e 'rmarkdown::render("$<", output_format = "pdf_document")'
+# Render Markdown to LaTeX
+%.tex: %.md
+	pandoc -s -o $@ $<
 
 # Render LaTeX to PDF
 %.pdf: %.tex
