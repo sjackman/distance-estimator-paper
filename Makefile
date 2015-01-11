@@ -17,7 +17,7 @@ install-deps:
 mathjax=https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 
 # Render Markdown to HTML
-%.html: %.md
+%.html: %-before.md %.md
 	pandoc -s --mathjax=$(mathjax) -o $@ $^
 
 # Render Markdown to LaTeX
