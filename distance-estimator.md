@@ -1,6 +1,9 @@
 ---
 title: 'DistanceEstimator: Estimate the distance between two nucleotide sequence fragments using paired-end reads'
 author: Shaun D Jackman, Inanc Birol
+header-includes:
+  \DeclareMathOperator*{\argmax}{arg\,max}
+  \DeclareMathOperator{\MLE}{MLE}
 ---
 
 Abstract
@@ -20,9 +23,9 @@ Estimator using the mean
 
 At first glance, this task appears to be rather simple, and a simple solution presents itself readily. A reasonable estimate, $\hat \theta_\text{mean}$, of the size of the gap is the difference between the mean of the population, $\mu$, and the mean of the sample, $\bar x$.
 
-\begin{equation*}
+$$
 \hat \theta_\text{mean} = \mu - \bar x
-\end{equation*}
+$$
 
 Maximum likelihood estimator
 ------------------------------------------------------------
@@ -54,12 +57,12 @@ f_{\theta}(x)
 
 Assume the reads are sampled uniformly from the genome between the coordinates $a$ and $b$, where $b - a$ is the size of the genome.
 
-\begin{equation*}
+$$
 P(U=u) = \begin{cases}
 \frac{1}{b-a} & a \leq u < b \\
 0 & \text{otherwise}
 \end{cases}
-\end{equation*}
+$$
 
 The probability that a fragment of size $X$ spans the gap is the probability that the fragment's left coordinate, $U$, falls to the left of the gap, and its right coordinate, $U+X$, falls to the right of gap.
 
@@ -89,23 +92,23 @@ w(x)
 
 Without loss of generality, assume $l_1 \leq l_2$.
 
-\begin{equation*}
+$$
 w(x) \propto \begin{cases}
 x & 0 \leq x < l_1 \\
 l_1 & l_1 \leq x < l_2 \\
 l_1 + l_2 - x & l_2 \leq x < l_1 + l_2 \\
 0 & \text{otherwise}
 \end{cases}
-\end{equation*}
+$$
 
-\begin{equation*}
+$$
 f_\theta(x) \propto f_X(x + \theta) w(x)
-\end{equation*}
+$$
 
-\begin{equation*}
+$$
 f_\theta(x) = \frac{ f_X(x + \theta) w(x) }
 	{ \sum_{j=1}^\infty f_X(j + \theta) w(j) }
-\end{equation*}
+$$
 
 Solving the maximum likelihood estimator
 ------------------------------------------------------------
@@ -121,12 +124,12 @@ We now substitute the distribution of observed fragment sizes, $f_\theta(x)$, in
 	{ \left( \sum_{j=1}^\infty f_X(j + \theta) w(j) \right) ^n }
 \end{align*}
 
-\begin{equation*}
+$$
 \log \mathcal{L}(\theta \mid x_1, \dotsc, x_n)
 = \sum_{i=1}^n \log f_X(x_i + \theta)
 	+ \sum_{i=1}^n \log w(i)
 	- n \log \sum_{j=1}^\infty f_X(j + \theta) w(j)
-\end{equation*}
+$$
 
 \begin{align*}
 \hat \theta_{\MLE}
