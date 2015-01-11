@@ -1,5 +1,4 @@
-DistanceEst paper
+DistanceEstimator
 ================================================================================
 
-
-Estimating the distance between two sequences using paired-end reads
+Estimate the distance between two nucleotide sequence fragments using paired-end reads
