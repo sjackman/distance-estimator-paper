@@ -150,9 +150,12 @@ Finding the value of $\theta$ that maximizes the likelihood function is an optim
 Conclusion
 ================================================================================
 
-This distance estimation algorithm is implemented by the ABySS assembly software in the utility DistanceEst, which requires as its input the distribution of fragment sizes of the sequencing library and a SAM-formatted file of paired-end reads that map to different sequences.
+This distance estimation algorithm is implemented by the ABySS assembly software [@simpson2009abyss] in the utility DistanceEst, which requires as its input the distribution of fragment sizes of the sequencing library and a SAM file [@li2009sequence] of paired-end reads that map to different sequences.
 
 Acknowledgements
 ================================================================================
 
 Jared Simpson implemented a maximum likelihood estimator for estimating distances between sequences in the first release of the software ABySS.
+
+References
+================================================================================
