@@ -18,12 +18,16 @@ mathjax=https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTM
 
 # Render Markdown to HTML
 %.html: %-before.md %.md
-	pandoc -s --mathjax=$(mathjax) --bibliography=$*.bib -o $@ $^
+	pandoc -s --mathjax=$(mathjax) --bibliography=$*.bib --csl=peerj.csl -o $@ $^
 
 # Render Markdown to LaTeX
 %.tex: %.md
-	pandoc -s --bibliography=$*.bib -o $@ $<
+	pandoc -s --bibliography=$*.bib --csl=peerj.csl -o $@ $<
 
 # Render LaTeX to PDF
 %.pdf: %.tex
 	pdflatex -halt-on-error $<
+
+# Download peerj.csl
+peerj.csl:
+	curl -O https://raw.githubusercontent.com/citation-style-language/styles/master/peerj.csl
