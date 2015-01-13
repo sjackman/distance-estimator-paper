@@ -2,13 +2,13 @@
 title: 'DistanceEstimator: Estimate the distance between two nucleotide sequence fragments using paired-end reads'
 author: Shaun D Jackman, Inanc Birol
 documentclass: wlpeerj
+bibliography: distance-estimator.bib
+csl: peerj.csl
 header-includes:
   \DeclareMathOperator*{\argmax}{arg\,max}
   \DeclareMathOperator{\MLE}{MLE}
   \keywords{genome sequence assembly, scaffolding, maximum likelihood estimator, distance, gap}
-  \begin{abstract}
-  Paired-end reads may be used to estimate the distance between two sequences. Comparing a statistic, such as the mean, of the sample population of fragment sizes to the global population of fragment sizes is a trivial but flawed estimator. The maximum likelihood estimator yields more accurate estimates.
-  \end{abstract}
+abstract: Paired-end reads may be used to estimate the distance between two sequences. Comparing a statistic, such as the mean, of the sample population of fragment sizes to the global population of fragment sizes is a trivial but flawed estimator. The maximum likelihood estimator yields more accurate estimates.
 ---
 
 Results

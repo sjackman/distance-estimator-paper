@@ -18,11 +18,11 @@ mathjax=https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTM
 
 # Render Markdown to HTML
 %.html: %-before.md %.md
-	pandoc -s --mathjax=$(mathjax) --bibliography=$*.bib --csl=peerj.csl -o $@ $^
+	pandoc --template=template -F pandoc-citeproc --mathjax=$(mathjax) -o $@ $^
 
 # Render Markdown to LaTeX
 %.tex: %.md
-	pandoc -s --bibliography=$*.bib --csl=peerj.csl -o $@ $<
+	pandoc --template=template -F pandoc-citeproc -o $@ $<
 
 # Render LaTeX to PDF
 %.pdf: %.tex
