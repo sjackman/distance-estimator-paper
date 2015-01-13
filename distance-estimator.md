@@ -101,17 +101,19 @@ $$
 Without loss of generality, assume $l_1 \leq l_2$.
 
 $$
-w(x) \propto \begin{cases}
+\begin{aligned}
+w(x) &\propto \begin{cases}
 x & 0 \leq x < l_1 \\
 l_1 & l_1 \leq x < l_2 \\
 l_1 + l_2 - x & l_2 \leq x < l_1 + l_2 \\
 0 & \text{otherwise}
 \end{cases}
 \\
-f_\theta(x) \propto f_X(x + \theta) w(x)
+f_\theta(x) &\propto f_X(x + \theta) w(x)
 \\
-f_\theta(x) = \frac{ f_X(x + \theta) w(x) }
+f_\theta(x) &= \frac{ f_X(x + \theta) w(x) }
 	{ \sum_{j=1}^\infty f_X(j + \theta) w(j) }
+\end{aligned}
 $$
 
 Solving the maximum likelihood estimator
@@ -127,14 +129,12 @@ $$
 	{ \sum_{j=1}^\infty f_X(j + \theta) w(j) } \\
 &= \frac{ \prod_{i=1}^n f_X(x_i + \theta) w(i) }
 	{ \left( \sum_{j=1}^\infty f_X(j + \theta) w(j) \right) ^n }
-\end{aligned}
 \\
 \log \mathcal{L}(\theta \mid x_1, \dotsc, x_n)
-= \sum_{i=1}^n \log f_X(x_i + \theta)
+&= \sum_{i=1}^n \log f_X(x_i + \theta)
 	+ \sum_{i=1}^n \log w(i)
 	- n \log \sum_{j=1}^\infty f_X(j + \theta) w(j)
 \\
-\begin{aligned}
 \hat \theta_{\MLE}
 &= \argmax_\theta \log \mathcal{L}(\theta \mid x_1, \dotsc, x_n) \\
 &= \argmax_\theta \left[ \sum_{i=1}^n \log f_X(x_i + \theta)
